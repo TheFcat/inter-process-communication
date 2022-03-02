@@ -20,3 +20,15 @@ Reads intergers from the pipe and calculate the Median value of the integers.
 ### Client3
 
 Reads intergers from the shared memory, and then calculating the Mode value of the integers.
+
+
+
+# How to use
+
+Just execute server.py
+
+`python server.py`
+
+and input integers then press enter
+
+integer input example: 5 5 7 8 9

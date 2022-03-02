@@ -1,9 +1,12 @@
+import os
 import re
 import socket
 import subprocess
 import time
 from multiprocessing import shared_memory
+
 from socket_client import HOST, PORT
+
 
 
 def get_parsed_data(data):
@@ -22,7 +25,7 @@ def get_parsed_data(data):
 if __name__ == '__main__':
     shm = shared_memory.SharedMemory(create=True, size=5000)
     client1 = subprocess.Popen(['python', 'socket_client.py'])
-    # client2 = subprocess.Popen(['python', 'pipe_client.py'])
+    client2 = subprocess.Popen(["python",  "pipe_client.py"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=5000)
     client3 = subprocess.Popen(['python', 'shared_memory_client.py', shm.name])
     input_data = input(
         "Server is ready. You can type intergers and then click [ENTER].  Clients will show the mean, median, and mode of the input values.\n")
@@ -34,6 +37,11 @@ if __name__ == '__main__':
 
     s.send(str(parsed_data).encode())
     s.recv(1024)
+
+    client2_result = client2.communicate(str(parsed_data).encode('utf-8'))
+    client2_ready, median = client2_result[0].decode('utf-8').splitlines()
+    print(client2_ready)
+    print(f'Median is {median}')
     buffer = shm.buf
     buffer[1:len(parsed_data) + 1] = bytearray(parsed_data)
     buffer[0] = len(parsed_data)
